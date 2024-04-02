@@ -1,0 +1,15 @@
+# prepare code for compilation
+git checkout develop &&
+git pull
+
+# build and copy frontend
+npm --prefix Frontend/lostandfound.web ci &&
+npm --prefix Frontend/lostandfound.web run build
+rm -rf ../front/*
+cp -r Frontend/lostandfound.web/build/* ../front/
+
+# build and deploy backend to docker
+docker-compose -f Backend/docker-compose-production.yml --env-file Backend/.env up --build -d
+
+# reload nginx
+sudo nginx -s reload

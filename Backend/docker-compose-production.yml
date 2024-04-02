@@ -1,0 +1,104 @@
+version: '3.9'
+
+x-common-variables: &common-variables
+    ASPNETCORE_ENVIRONMENT: Production
+    PositionStackService__AccessKey: ${PositionStackService__AccessKey}
+    LostAndFoundAuthentication__AccessTokenSecret: ${LostAndFoundAuthentication__AccessTokenSecret}
+    LostAndFoundAuthentication__RefreshTokenSecret: ${LostAndFoundAuthentication__RefreshTokenSecret}
+
+services:
+  lostandfound.azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: lostandfound-azurite
+    hostname: azurite
+    restart: always
+    command: 'azurite --loose --skipApiVersionCheck --blobHost 0.0.0.0 --blobPort 10000 --location /workspace --debug /workspace/debug.log'
+    ports:
+        - 10000:10000
+    volumes:
+        - ./azurite:/workspace
+
+  lostandfound.rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+        - 5610:15672
+        - 5600:5672
+    container_name: lostandfound-rabbitmq
+    
+  lostandfound.mongodb:
+    container_name: "lostandfound-mongodb"
+    image: mongo:latest
+    ports:
+        - 5717:27017
+
+  lostandfound.authservice:
+    container_name: auth-service
+    build:
+      context: .
+      dockerfile: AuthService/src/LostAndFound.AuthService/Dockerfile
+    ports:
+        - "6100:80"
+    restart: always
+    depends_on:
+        - "lostandfound.mongodb"
+        - "lostandfound.rabbitmq"
+    environment:
+        <<: *common-variables
+
+  lostandfound.chatservice:
+    container_name: chat-service
+    build:
+      context: .
+      dockerfile: ChatService/src/LostAndFound.ChatService/Dockerfile
+    ports:
+        - "6200:80"
+    restart: always
+    depends_on:
+        - "lostandfound.mongodb"
+    environment:
+        <<: *common-variables
+
+  lostandfound.gateway:
+    container_name: gateway
+    build:
+      context: .
+      dockerfile: Gateway/src/LostAndFound.Gateway/Dockerfile
+    ports:
+        - "6500:80"
+    restart: always
+    depends_on:
+        - "lostandfound.authservice"
+        - "lostandfound.chatservice"
+        - "lostandfound.profileservice"
+        - "lostandfound.publicationservice"
+    environment:
+        <<: *common-variables
+        
+  lostandfound.profileservice:
+    container_name: profile-service
+    build:
+      context: .
+      dockerfile: ProfileService/src/LostAndFound.ProfileService/Dockerfile
+    ports:
+        - "6300:80"
+    restart: always
+    depends_on:        
+        - "lostandfound.mongodb"
+        - "lostandfound.azurite"
+        - "lostandfound.rabbitmq"
+    environment:
+        <<: *common-variables
+
+  lostandfound.publicationservice:
+    container_name: publication-service
+    build:
+      context: .
+      dockerfile: PublicationService/src/LostAndFound.PublicationService/Dockerfile
+    ports:
+        - "6400:80"
+    restart: always
+    depends_on:
+        - "lostandfound.mongodb"
+        - "lostandfound.azurite"
+    environment:
+        <<: *common-variables

@@ -1,0 +1,60 @@
+parameters:
+  - name: nodeVersion
+    type: string
+    default: "16.x"
+
+  - name: commonsProjectDirectory
+    type: string
+
+  - name: mobileProjectDirectory
+    type: string
+
+  - name: artifactName
+    type: string
+
+stages:
+  - stage: BuildReactNativeApp
+    displayName: Build ReactNativeApp
+    jobs:
+      - job: Build
+        displayName: Build ReactNativeApp
+        steps:
+          - task: NodeTool@0
+            displayName: "Install Node.js"
+            inputs:
+              versionSpec: "${{ parameters.nodeVersion }}"
+
+          - script: |
+              npm ci
+            displayName: "Run script: npm clean install in commons project directory"
+            workingDirectory: ${{ parameters.commonsProjectDirectory }}
+
+          - script: |
+              npm ci
+            displayName: "Run script: npm clean install in mobile project directory"
+            workingDirectory: ${{ parameters.mobileProjectDirectory }}
+
+          - task: Gradle@2
+            inputs:
+              workingDirectory: '${{ parameters.mobileProjectDirectory }}/android'
+              gradleWrapperFile: '${{ parameters.mobileProjectDirectory }}/android/gradlew'
+              gradleOptions: '-Xmx3072m'
+              publishJUnitResults: false
+              testResultsFiles: '**/TEST-*.xml'
+              tasks: 'assembleRelease'
+
+          - task: AndroidSigning@2
+            inputs:
+              apkFiles: '**/*.apk'
+              jarsign: true
+              jarsignerKeystoreFile: 'android.keystore'
+              jarsignerKeystorePassword: '$(AndroidKeyStorePassword)'
+              jarsignerKeystoreAlias: '$(AndroidKeyAlias)'
+              jarsignerKeyPassword: '$(AndroidKeyStorePassword)'
+              zipalign: true
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              pathtoPublish: '${{ parameters.mobileProjectDirectory }}/android/app/build/outputs/apk/release'
+              artifactName: 'android'
+              publishLocation: 'container'

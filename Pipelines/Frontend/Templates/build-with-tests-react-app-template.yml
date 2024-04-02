@@ -1,0 +1,54 @@
+parameters:
+  - name: nodeVersion
+    type: string
+    default: "16.x"
+
+  - name: frontendProjectDirectory
+    type: string
+
+  - name: artifactName
+    type: string
+
+stages:
+  - stage: BuildReactApp
+    displayName: Build ReactApp
+    jobs:
+      - job: Build
+        displayName: Build ReactApp
+        steps:
+          - task: NodeTool@0
+            displayName: "Install Node.js"
+            inputs:
+              versionSpec: "${{ parameters.nodeVersion }}"
+
+          - script: |
+              npm ci
+              npm run build --if-present
+            displayName: "Run script: npm clean install and build"
+            workingDirectory: ${{ parameters.frontendProjectDirectory }}
+
+          - script: |
+              npm run citest || exit 1
+            displayName: 'Unit tests'
+            workingDirectory: ${{ parameters.frontendProjectDirectory }}
+
+          - task: PublishTestResults@2
+            displayName: 'Publish Test Results junit.xml'
+            inputs:
+              testResultsFiles: '**/test-report.xml'
+              testResultsFormat: 'JUnit' 
+
+          - task: ArchiveFiles@2
+            displayName: "Archive files"
+            inputs:
+              rootFolderOrFile: "${{ parameters.frontendProjectDirectory }}/build"
+              includeRootFolder: false
+              archiveType: tar
+              archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-${{ parameters.artifactName }}.tar
+              replaceExistingArchive: true
+
+          - task: PublishPipelineArtifact@1
+            displayName: "Publish ReactApp pipeline artifacts"
+            inputs:
+              artifactName: "$(Build.BuildId)-${{ parameters.artifactName }}"
+              path: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-${{ parameters.artifactName }}.tar

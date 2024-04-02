@@ -1,0 +1,28 @@
+name: $(date:yyyyMMdd)$(rev:.r)_$(SourceBranchName)-$(BuildId)-FrontendMobileBuild
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - group: LostAndFound.Mobile
+
+trigger:
+  paths:
+    include:
+    - Frontend/LostAndFoundMobile/*
+
+stages:
+  - ${{ if ne(variables['Build.SourceBranchName'], 'develop') }}:
+    - template: Templates/build-react-native-app-template.yml
+      parameters:
+        commonsProjectDirectory: Frontend/commons
+        mobileProjectDirectory: Frontend/LostAndFoundMobile
+        nodeVersion: 16.x
+        artifactName: lostandfound.mobile
+  - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
+    - template: Templates/build-and-publish-react-native-app-template.yml
+      parameters:
+        commonsProjectDirectory: Frontend/commons
+        mobileProjectDirectory: Frontend/LostAndFoundMobile
+        nodeVersion: 16.x
+        artifactName: lostandfound.mobile

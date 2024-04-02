@@ -1,0 +1,32 @@
+parameters:
+  - name: nodeVersion
+    type: string
+    default: "16.x"
+
+  - name: commonsProjectDirectory
+    type: string
+
+  - name: artifactName
+    type: string
+
+stages:
+  - stage: BuildFrontendCommonModule
+    displayName: Build Frontend Common Module
+    jobs:
+      - job: Build
+        displayName: Build common module
+        steps:
+          - task: NodeTool@0
+            displayName: "Install Node.js"
+            inputs:
+              versionSpec: "${{ parameters.nodeVersion }}"
+
+          - script: |
+              npm ci
+            displayName: "Run script: npm clean install"
+            workingDirectory: ${{ parameters.commonsProjectDirectory }}
+
+          - script: |
+              npx tsc
+            displayName: "Run script: npx tsc"
+            workingDirectory: ${{ parameters.commonsProjectDirectory }}

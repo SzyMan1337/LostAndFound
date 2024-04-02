@@ -1,0 +1,18 @@
+name: $(date:yyyyMMdd)$(rev:.r)_$(SourceBranchName)-$(BuildId)-ChatServiceWebApiBuildWithTests
+
+pool: Default
+
+trigger:
+  paths:
+    include:
+    - Backend/ChatService/*
+
+stages:
+  - template: Templates/build-with-tests-webapi-template.yml
+    parameters:
+      webapiProjectDirectory: Backend/ChatService/src/LostAndFound.ChatService
+      unitTestProjectDirectory: Backend/ChatService/tests/LostAndFound.ChatService.UnitTests
+      runUnitTests: true
+      integrationTestProjectDirectory: Backend/ChatService/tests/LostAndFound.ChatService.IntegrationTests
+      runIntegrationTests: true
+      artifactName: LostAndFound.ChatService

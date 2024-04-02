@@ -1,0 +1,50 @@
+parameters:
+  - name: buildConfiguration
+    type: string
+    default: "Release"
+
+  - name: dotNetVersion
+    type: string
+    default: "6.0.x"
+
+  - name: dotnetFramework
+    type: string
+    default: "net6.0"
+
+  - name: webapiProjectDirectory
+    type: string
+
+  - name: artifactName
+    type: string
+
+stages:
+  - stage: BuildWebApi
+    displayName: Build WebApi
+    jobs:
+      - job: Build
+        displayName: Build .Net Core WebApi
+        steps:
+          - task: UseDotNet@2
+            inputs:
+              version: ${{ parameters.dotNetVersion }}
+              includePreviewVersions: true
+
+          - script: dotnet build --framework ${{ parameters.dotNetFramework }} --configuration ${{ parameters.buildConfiguration }}
+            workingDirectory: ${{ parameters.webapiProjectDirectory }}
+            displayName: "dotnet build ${{ parameters.buildConfiguration }}"
+
+          - task: DotNetCoreCLI@2
+            displayName: "Publish project to Staging Directory"
+            inputs:
+              command: "publish"
+              publishWebProjects: false
+              projects: |
+                ${{ parameters.webapiProjectDirectory }}/*.csproj
+              arguments: "--configuration ${{ parameters.buildConfiguration }} --output $(Build.artifactstagingdirectory)"
+              zipAfterPublish: false
+
+          - task: PublishBuildArtifacts@1
+            displayName: "Publish artifact"
+            inputs:
+              pathtoPublish: "$(Build.ArtifactStagingDirectory)"
+              artifactName: "$(Build.BuildId)-${{ parameters.artifactName }}"

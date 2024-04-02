@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  lostandfound.authservice:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  lostandfound.chatservice:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  lostandfound.gateway:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  lostandfound.publicationservice:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  lostandfound.profileservice:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development

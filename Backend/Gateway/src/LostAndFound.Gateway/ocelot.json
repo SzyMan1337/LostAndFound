@@ -1,0 +1,350 @@
+{
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/account/register",
+      "DownstreamPathTemplate": "/account/register",
+      "UpstreamHttpMethod": [
+        "Post"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5100
+        }
+      ],
+      "SwaggerKey": "accounts"
+    },
+    {
+      "UpstreamPathTemplate": "/account/login",
+      "DownstreamPathTemplate": "/account/login",
+      "UpstreamHttpMethod": [
+        "Post"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5100
+        }
+      ],
+      "SwaggerKey": "accounts"
+    },
+    {
+      "UpstreamPathTemplate": "/account/refresh",
+      "DownstreamPathTemplate": "/account/refresh",
+      "UpstreamHttpMethod": [
+        "Post"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5100
+        }
+      ],
+      "SwaggerKey": "accounts"
+    },
+    {
+      "UpstreamPathTemplate": "/account/logout",
+      "DownstreamPathTemplate": "/account/logout",
+      "UpstreamHttpMethod": [
+        "Delete"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5100
+        }
+      ],
+      "SwaggerKey": "accounts"
+    },
+    {
+      "UpstreamPathTemplate": "/chat",
+      "DownstreamPathTemplate": "/chat",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "DownstreamHeaderTransform": {
+        "X-Pagination": "{DownstreamBaseUrl}, {BaseUrl}"
+      },
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5200
+        }
+      ],
+      "SwaggerKey": "chats"
+    },
+    {
+      "UpstreamPathTemplate": "/hubs/chat",
+      "DownstreamPathTemplate": "/hubs/chat",
+      "DownstreamScheme": "wss",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5200
+        }
+      ]
+    },
+    {
+      "DownstreamPathTemplate": "/hubs/chat/{path}",
+      "DownstreamScheme": "wss",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5200
+        }
+      ],
+      "UpstreamPathTemplate": "/hubs/chat/{path}"
+    },
+    {
+      "UpstreamPathTemplate": "/chat/{chatMemberId}",
+      "DownstreamPathTemplate": "/chat/{chatMemberId}",
+      "UpstreamHttpMethod": [
+        "Patch"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5200
+        }
+      ],
+      "SwaggerKey": "chats"
+    },
+    {
+      "UpstreamPathTemplate": "/chat/message/{recipentId}",
+      "DownstreamPathTemplate": "/chat/message/{recipentId}",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post"
+      ],
+      "DownstreamHeaderTransform": {
+        "X-Pagination": "{DownstreamBaseUrl}, {BaseUrl}"
+      },
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5200
+        }
+      ],
+      "SwaggerKey": "chats"
+    },
+    {
+      "UpstreamPathTemplate": "/chat/notification",
+      "DownstreamPathTemplate": "/chat/notification",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5200
+        }
+      ],
+      "SwaggerKey": "chats"
+    },
+    {
+      "UpstreamPathTemplate": "/profile",
+      "DownstreamPathTemplate": "/profile",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Put"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5300
+        }
+      ],
+      "SwaggerKey": "profiles"
+    },
+    {
+      "UpstreamPathTemplate": "/profile/{userId}",
+      "DownstreamPathTemplate": "/profile/{userId}",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5300
+        }
+      ],
+      "SwaggerKey": "profiles"
+    },
+    {
+      "UpstreamPathTemplate": "/profile/picture",
+      "DownstreamPathTemplate": "/profile/picture",
+      "UpstreamHttpMethod": [
+        "Patch",
+        "Delete"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5300
+        }
+      ],
+      "SwaggerKey": "profiles"
+    },
+    {
+      "UpstreamPathTemplate": "/profile/{profileOwnerId}/comments",
+      "DownstreamPathTemplate": "/profile/{profileOwnerId}/comments",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "DownstreamHeaderTransform": {
+        "X-Pagination": "{DownstreamBaseUrl}, {BaseUrl}"
+      },
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5300
+        }
+      ],
+      "SwaggerKey": "profiles"
+    },
+    {
+      "UpstreamPathTemplate": "/publication/categories",
+      "DownstreamPathTemplate": "/categories",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5400
+        }
+      ],
+      "SwaggerKey": "publications"
+    },
+    {
+      "UpstreamPathTemplate": "/publication",
+      "DownstreamPathTemplate": "/publication",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post"
+      ],
+      "DownstreamHeaderTransform": {
+        "X-Pagination": "{DownstreamBaseUrl}, {BaseUrl}"
+      },
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5400
+        }
+      ],
+      "SwaggerKey": "publications"
+    },
+    {
+      "UpstreamPathTemplate": "/publication/{publicationId}",
+      "DownstreamPathTemplate": "/publication/{publicationId}",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Put",
+        "Patch",
+        "Delete"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5400
+        }
+      ],
+      "SwaggerKey": "publications"
+    },
+    {
+      "UpstreamPathTemplate": "/publication/{publicationId}/rating",
+      "DownstreamPathTemplate": "/publication/{publicationId}/rating",
+      "UpstreamHttpMethod": [
+        "Patch"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5400
+        }
+      ],
+      "SwaggerKey": "publications"
+    },
+    {
+      "UpstreamPathTemplate": "/publication/{publicationId}/photo",
+      "DownstreamPathTemplate": "/publication/{publicationId}/photo",
+      "UpstreamHttpMethod": [
+        "Patch",
+        "Delete"
+      ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5400
+        }
+      ],
+      "SwaggerKey": "publications"
+    }
+  ],
+  "SwaggerEndPoints": [
+    {
+      "Key": "accounts",
+      "Config": [
+        {
+          "Name": "LostAndFound.AuthService",
+          "Version": "v1",
+          "Url": "https://localhost:5100/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "chats",
+      "Config": [
+        {
+          "Name": "LostAndFound.ChatService",
+          "Version": "v1",
+          "Url": "https://localhost:5200/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "profiles",
+      "Config": [
+        {
+          "Name": "LostAndFound.ProfileService",
+          "Version": "v1",
+          "Url": "https://localhost:5300/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "publications",
+      "Config": [
+        {
+          "Name": "LostAndFound.PublicationService",
+          "Version": "v1",
+          "Url": "https://localhost:5400/swagger/v1/swagger.json"
+        }
+      ]
+    }
+  ],
+
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost/5000"
+  }
+}

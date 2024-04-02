@@ -1,0 +1,15 @@
+name: $(date:yyyyMMdd)$(rev:.r)_$(SourceBranchName)-$(BuildId)-CommonNodeModuleBuild
+
+pool: Default
+
+trigger:
+  paths:
+    include:
+    - Frontend/commons/*
+
+stages:
+  - template: Templates/build-common-node-module-template.yml
+    parameters:
+      commonsProjectDirectory: Frontend/commons
+      nodeVersion: 16.x
+      artifactName: lostandfound.commons

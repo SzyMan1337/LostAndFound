@@ -1,0 +1,89 @@
+version: '3.9'
+
+services:
+  lostandfound.mongodb:
+    container_name: "lostandfound-mongodb"
+    image: mongo:latest
+    ports:
+        - 27017:27017
+
+  lostandfound.azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: lostandfound-azurite
+    hostname: azurite
+    restart: always
+    command: 'azurite --loose --blobHost 0.0.0.0 --blobPort 10000 --location /workspace --debug /workspace/debug.log'
+    ports:
+        - 10000:10000
+    volumes:
+        - ./azurite:/workspace
+
+  lostandfound.rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+        - 15672:15672
+        - 4001:5672
+    container_name: lostandfound-rabbitmq
+
+  lostandfound.authservice:
+    container_name: auth-service
+    build:
+      context: .
+      dockerfile: AuthService/src/LostAndFound.AuthService/Dockerfile
+    ports:
+        - "5100:80"
+    restart: always
+    depends_on:
+        - "lostandfound.mongodb"
+        - "lostandfound.rabbitmq"
+      
+  lostandfound.chatservice:
+    container_name: chat-service
+    build:
+      context: .
+      dockerfile: ChatService/src/LostAndFound.ChatService/Dockerfile
+    ports:
+        - "5200:80"
+    restart: always
+    depends_on:
+        - "lostandfound.mongodb"
+
+  lostandfound.gateway:
+    container_name: gateway
+    build:
+      context: .
+      dockerfile: Gateway/src/LostAndFound.Gateway/Dockerfile
+    ports:
+        - "5000:80"
+    restart: always
+    depends_on:
+        - "lostandfound.authservice"
+        - "lostandfound.chatservice"
+        - "lostandfound.profileservice"
+        - "lostandfound.publicationservice"
+
+  lostandfound.profileservice:
+    container_name: profile-service
+    build:
+      context: .
+      dockerfile: ProfileService/src/LostAndFound.ProfileService/Dockerfile
+    ports:
+        - "5300:80"
+    restart: on-failure
+    restart: always
+    depends_on:        
+        - "lostandfound.mongodb"
+        - "lostandfound.azurite"
+        - "lostandfound.rabbitmq"
+
+  lostandfound.publicationservice:
+    container_name: publication-service
+    build:
+      context: .
+      dockerfile: PublicationService/src/LostAndFound.PublicationService/Dockerfile
+    ports:
+        - "5400:80"
+    restart: always
+    depends_on:
+        - "lostandfound.mongodb"
+        - "lostandfound.azurite"

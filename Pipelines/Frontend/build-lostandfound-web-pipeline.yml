@@ -1,0 +1,15 @@
+name: $(date:yyyyMMdd)$(rev:.r)_$(SourceBranchName)-$(BuildId)-FrontendWebBuild
+
+pool: Default
+
+trigger:
+  paths:
+    include:
+    - Frontend/lostandfound.web/*
+
+stages:
+  - template: Templates/build-with-tests-react-app-template.yml
+    parameters:
+      frontendProjectDirectory: Frontend/lostandfound.web
+      nodeVersion: 16.x
+      artifactName: lostandfound.web
